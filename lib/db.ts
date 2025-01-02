@@ -1,6 +1,4 @@
 import mysql from 'mysql2/promise';
-
-// Import necessary types from mysql2
 import { RowDataPacket, ResultSetHeader, OkPacket } from 'mysql2';
 
 // Update interfaces to extend RowDataPacket
@@ -10,6 +8,7 @@ export interface PortfolioItem extends RowDataPacket {
   description: string;
   image: string;
   category: string;
+  type: 'project' | 'course' | 'thesis';
   created_at: Date;
 }
 
@@ -27,6 +26,14 @@ export interface BlogPost extends RowDataPacket {
   title: string;
   excerpt: string;
   content: string;
+  created_at: Date;
+}
+
+export interface Message extends RowDataPacket {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
   created_at: Date;
 }
 
@@ -51,10 +58,9 @@ async function ensureConnection() {
   }
 }
 
-// Function to get all portfolio items
+// Function to get all portfolio items (projects and courses)
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
   await ensureConnection();
-  initializeTables();
   const [rows] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items ORDER BY created_at DESC');
   return rows;
 }
@@ -73,23 +79,23 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   return rows;
 }
 
-// Function to add a new portfolio item
-export async function addPortfolioItem(title: string, description: string, category: string, imageUrl: string): Promise<PortfolioItem> {
+// Function to add a new portfolio item (project or course)
+export async function addPortfolioItem(title: string, description: string, category: string, image: string, type: 'project' | 'course'): Promise<PortfolioItem> {
   await ensureConnection();
   const [result] = await pool.query<ResultSetHeader>(
-    'INSERT INTO portfolio_items (title, description, category, image) VALUES (?, ?, ?, ?)',
-    [title, description, category, imageUrl]
+    'INSERT INTO portfolio_items (title, description, category, image, type) VALUES (?, ?, ?, ?, ?)',
+    [title, description, category, image, type]
   );
   const [newItem] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items WHERE id = ?', [result.insertId]);
   return newItem[0];
 }
 
 // Function to update an existing portfolio item
-export async function updatePortfolioItem(id: number, title: string, description: string, category: string, imageUrl: string): Promise<PortfolioItem | null> {
+export async function updatePortfolioItem(id: number, title: string, description: string, category: string, image: string, type: 'project' | 'course'): Promise<PortfolioItem | null> {
   await ensureConnection();
   await pool.query<ResultSetHeader>(
-    'UPDATE portfolio_items SET title = ?, description = ?, category = ?, image = ? WHERE id = ?',
-    [title, description, category, imageUrl, id]
+    'UPDATE portfolio_items SET title = ?, description = ?, category = ?, image = ?, type = ? WHERE id = ?',
+    [title, description, category, image, type, id]
   );
   const [updatedItem] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items WHERE id = ?', [id]);
   return updatedItem[0] || null;
@@ -170,8 +176,15 @@ export async function createPortfolioTable(): Promise<void> {
       description TEXT NOT NULL,
       category VARCHAR(100) NOT NULL,
       image VARCHAR(255) NOT NULL,
+      type ENUM('project', 'course', 'thesis') NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
+  `);
+  
+  // Add or modify the type column if it doesn't exist
+  await pool.query(`
+    ALTER TABLE portfolio_items
+    MODIFY COLUMN type ENUM('project', 'course', 'thesis') NOT NULL DEFAULT 'project'
   `);
 }
 
@@ -204,11 +217,44 @@ export async function createBlogTable(): Promise<void> {
   `);
 }
 
+// Function to add a new message
+export async function addMessage(name: string, email: string, message: string): Promise<Message> {
+  await ensureConnection();
+  const [result] = await pool.query<ResultSetHeader>(
+    'INSERT INTO messages (name, email, message) VALUES (?, ?, ?)',
+    [name, email, message]
+  );
+  const [newMessage] = await pool.query<Message[]>('SELECT * FROM messages WHERE id = ?', [result.insertId]);
+  return newMessage[0];
+}
+
+export async function getMessages(): Promise<Message[]> {
+  await ensureConnection();
+  await createMessagesTable(); // Ensure the table exists
+  const [rows] = await pool.query<Message[]>('SELECT * FROM messages ORDER BY created_at DESC');
+  return rows;
+}
+
+// Function to create the messages table if it doesn't exist
+export async function createMessagesTable(): Promise<void> {
+  await ensureConnection();
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      message TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
+
 // Initialize all tables
 export async function initializeTables(): Promise<void> {
   await createPortfolioTable();
   await createResumeTable();
   await createBlogTable();
+  await createMessagesTable();
 }
 
 // Function to test the database connection
@@ -219,5 +265,11 @@ export async function testDatabaseConnection(): Promise<void> {
   } catch (error) {
     console.error('Failed to connect to the database:', error);
   }
+}
+
+export async function deleteMessage(id: number): Promise<boolean> {
+  await ensureConnection();
+  const [result] = await pool.query<ResultSetHeader>('DELETE FROM messages WHERE id = ?', [id]);
+  return result.affectedRows > 0;
 }
 

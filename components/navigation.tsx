@@ -13,6 +13,7 @@ export function Navigation() {
     { href: '/resume', label: 'Resume' },
     { href: '/blog', label: 'Blog' },
     { href: '/contact', label: 'Contact' },
+    { href: '/admin', label: 'Admin' },
   ]
 
   return (

@@ -5,33 +5,30 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { PortfolioItem } from '@/lib/db'
+import { ResumeItem } from '@/lib/db'
 
-interface AddPortfolioItemFormProps {
-  item?: PortfolioItem
+interface AddResumeItemFormProps {
+  item?: ResumeItem
   onCancel?: () => void
 }
 
-export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormProps) {
+export function AddResumeItemForm({ item, onCancel }: AddResumeItemFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
+    type: 'experience',
     title: '',
     description: '',
-    category: '',
-    type: 'project' as 'project' | 'course' | 'thesis',
+    date: '',
   })
-  const [file, setFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   useEffect(() => {
     if (item) {
       setFormData({
+        type: item.type,
         title: item.title,
         description: item.description,
-        category: item.category,
-        type: item.type,
+        date: item.date,
       })
-      setPreviewUrl(`/portfolio-images/${item.image}`)
     }
   }, [item])
 
@@ -41,47 +38,40 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
   }
 
   const handleTypeChange = (value: string) => {
-    setFormData(prev => ({ ...prev, type: value as 'project' | 'course' | 'thesis' }))
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0]
-      setFile(selectedFile)
-      setPreviewUrl(URL.createObjectURL(selectedFile))
-    }
+    setFormData(prev => ({ ...prev, type: value as 'experience' | 'education' }))
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setIsLoading(true)
 
-    const form = new FormData()
-    form.append('title', formData.title)
-    form.append('description', formData.description)
-    form.append('category', formData.category)
-    form.append('type', formData.type)
-    if (file) {
-      form.append('image', file)
-    }
-
     try {
-      const url = item ? `/api/portfolio/${item.id}` : '/api/portfolio'
+      const url = item ? `/api/resume/${item.id}` : '/api/resume'
       const method = item ? 'PUT' : 'POST'
 
       const response = await fetch(url, {
         method,
-        body: form,
+        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || `Failed to ${item ? 'update' : 'add'} portfolio item`)
+        throw new Error(errorData.error || `Failed to ${item ? 'update' : 'add'} resume item`)
       }
 
-      alert(`Portfolio item ${item ? 'updated' : 'added'} successfully!`)
+      alert(`Resume item ${item ? 'updated' : 'added'} successfully!`)
       
-      // Reload the page
+      if (item && onCancel) {
+        onCancel()
+      } else {
+        event.currentTarget.reset()
+        setFormData({ type: 'experience', title: '', description: '', date: '' })
+      }
+
+      // Refresh the page to update the resume items list
       window.location.reload()
     } catch (error) {
       alert('Error: ' + (error instanceof Error ? error.message : 'An unknown error occurred'))
@@ -92,6 +82,17 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <Select name="type" value={formData.type} onValueChange={handleTypeChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="experience">Experience</SelectItem>
+            <SelectItem value="education">Education</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div>
         <Input
           name="title"
@@ -104,11 +105,11 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
       </div>
       <div>
         <Input
-          name="category"
-          placeholder="Category"
+          name="date"
+          placeholder="Date"
           required
           className="bg-[#222222] border-gray-700"
-          value={formData.category}
+          value={formData.date}
           onChange={handleChange}
         />
       </div>
@@ -122,31 +123,6 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
           onChange={handleChange}
         />
       </div>
-      <div>
-        <Select name="type" value={formData.type} onValueChange={handleTypeChange}>
-          <SelectTrigger className="bg-[#222222] border-gray-700">
-            <SelectValue placeholder="Select type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="project">Project</SelectItem>
-            <SelectItem value="course">Course</SelectItem>
-            <SelectItem value="thesis">Thesis</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="bg-[#222222] border-gray-700"
-        />
-      </div>
-      {previewUrl && (
-        <div className="mt-4">
-          <img src={previewUrl} alt="Preview" className="max-w-full h-auto max-h-48 object-contain" />
-        </div>
-      )}
       <div className="flex justify-between">
         <Button type="submit" disabled={isLoading}>
           {isLoading ? 'Saving...' : (item ? 'Update Item' : 'Add Item')}

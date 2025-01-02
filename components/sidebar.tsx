@@ -5,42 +5,42 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'EMAIL',
-    value: 'richard@example.com',
+    value: 'mdsa134867@gmail.com',
   },
   {
     icon: Phone,
     label: 'PHONE',
-    value: '+1(213) 352-2795',
+    value: '+8801610585100',
   },
   {
     icon: Calendar,
     label: 'BIRTHDAY',
-    value: 'June 23, 1992',
+    value: 'March 5, 2002',
   },
   {
     icon: MapPin,
     label: 'LOCATION',
-    value: 'Sacramento, California, USA',
+    value: 'Rajshahi, Bangladesh',
   },
 ]
 
 export function Sidebar() {
   return (
     <div className="bg-[#222222] rounded-2xl p-8 flex flex-col items-center">
-      <div className="w-32 h-32 relative mb-6">
+      <div className="w-50 h-50 relative mb-6">
         <Image
           src="/IMG_1531.JPG"
-          alt="Richard Hanrick"
-          width={128}
-          height={128}
+          alt="MD. SABBIR AHAMMED"
+          width={300}
+          height={300}
           className="rounded-2xl"
           priority
         />
       </div>
       
-      <h1 className="text-2xl font-bold mb-2">Richard Hanrick</h1>
+      <h1 className="text-2xl font-bold mb-2">MD. SABBIR AHAMMED</h1>
       <div className="px-4 py-1 bg-[#2D2D2D] rounded-full text-sm mb-8">
-        Web Developer
+        Aspiring Fullstack Software Engineer
       </div>
 
       <div className="w-full space-y-6">

@@ -1,28 +1,42 @@
-import { sql } from '@vercel/postgres'
 import { NextResponse } from 'next/server'
+import { addMessage, createMessagesTable } from '@/lib/db'
+import nodemailer from 'nodemailer'
 
 export async function POST(request: Request) {
   try {
+    await createMessagesTable()
     const { name, email, message } = await request.json()
 
-    await sql`
-      CREATE TABLE IF NOT EXISTS contacts (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        message TEXT NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `
+    const newMessage = await addMessage(name, email, message)
 
-    await sql`
-      INSERT INTO contacts (name, email, message)
-      VALUES (${name}, ${email}, ${message})
-    `
+    if (!newMessage) {
+      throw new Error('Failed to add message to the database')
+    }
+
+    // Send email notification
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    })
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: 'mdsa134867@gmail.com',
+      subject: 'New Contact Form Submission',
+      text: `
+        Name: ${name}
+        Email: ${email}
+        Message: ${message}
+      `,
+    })
 
     return NextResponse.json({ message: 'Message sent successfully' }, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: 'Error sending message' }, { status: 500 })
+    console.error('Error in POST /api/contact:', error)
+    return NextResponse.json({ error: 'Error sending message: ' + (error instanceof Error ? error.message : 'Unknown error') }, { status: 500 })
   }
 }
 

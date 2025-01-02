@@ -2,6 +2,8 @@ import { Navigation } from '@/components/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { getBlogPosts, BlogPost } from '@/lib/db'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AdminPanel } from '@/components/admin-panel-blog'
+import { AdminCheck } from '@/components/admin-check'
 
 export default async function Blog() {
   let posts: BlogPost[] = [];
@@ -38,6 +40,10 @@ export default async function Blog() {
                 {error && <p className="text-white mt-2">Error: {error}</p>}
               </div>
 
+              <AdminCheck>
+                <AdminPanel blogPosts={posts} />
+              </AdminCheck>
+
               {/* Blog posts or error message */}
               {isConnected && posts.length > 0 ? (
                 <div className="grid gap-6">
@@ -45,7 +51,7 @@ export default async function Blog() {
                     <Card key={post.id} className="bg-[#222222] border-0">
                       <CardHeader>
                         <div className="text-yellow-500 text-sm mb-2">{new Date(post.created_at).toLocaleDateString()}</div>
-                        <CardTitle>{post.title}</CardTitle>
+                        <CardTitle className="text-white">{post.title}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <p className="text-gray-400">{post.excerpt}</p>
@@ -56,7 +62,7 @@ export default async function Blog() {
               ) : (
                 <p className="text-gray-400">
                   {isConnected 
-                    ? "No blog posts found. Please check back later." 
+                    ? "No blog posts found. Add some posts to get started!" 
                     : "Unable to fetch blog posts. Please check your database connection."}
                 </p>
               )}

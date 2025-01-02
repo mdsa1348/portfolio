@@ -1,6 +1,8 @@
 import { Navigation } from '@/components/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { getResumeItems, ResumeItem } from '@/lib/db'
+import { AdminPanel } from '@/components/admin-panel-resume'
+import { AdminCheck } from '@/components/admin-check'
 
 export default async function Resume() {
   let resumeItems: ResumeItem[] = [];
@@ -27,9 +29,8 @@ export default async function Resume() {
           <div className="space-y-8">
             <section>
               <h2 className="text-2xl font-bold mb-4 flex items-center gap-4">
-                Resume
-                <span className="h-1 w-10 bg-yellow-500 rounded-full" />
-              </h2>
+                Resume</h2>
+              <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
 
               {/* Database connection status */}
               <div className={`p-4 mb-6 rounded-md ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}>
@@ -38,6 +39,10 @@ export default async function Resume() {
                 </p>
                 {error && <p className="text-white mt-2">Error: {error}</p>}
               </div>
+
+              <AdminCheck>
+                <AdminPanel resumeItems={resumeItems} />
+              </AdminCheck>
 
               {/* Resume items or error message */}
               {isConnected && resumeItems.length > 0 ? (
@@ -71,7 +76,7 @@ export default async function Resume() {
               ) : (
                 <p className="text-gray-400">
                   {isConnected 
-                    ? "No resume items found. Please check back later." 
+                    ? "No resume items found. Please add some items to get started!" 
                     : "Unable to fetch resume items. Please check your database connection."}
                 </p>
               )}

@@ -7,7 +7,7 @@ export function About() {
       <section>
         <h2 className="text-2xl font-bold mb-4">About Me</h2>
         <p className="text-gray-400 leading-relaxed">
-          I'm Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media. I
+          I&apos;m Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media. I
           enjoy turning complex problems into simple, beautiful and intuitive designs.
         </p>
         <p className="text-gray-400 leading-relaxed mt-4">
@@ -18,7 +18,7 @@ export function About() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold mb-6">What I'm Doing</h2>
+        <h2 className="text-2xl font-bold mb-6">What I&apos;m Doing</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="bg-gray-900 border-gray-800">
             <CardHeader className="flex flex-row items-center gap-4">

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PortfolioItem } from '@/lib/db'
+import Image from 'next/image';
 
 interface AddPortfolioItemFormProps {
   item?: PortfolioItem
@@ -144,7 +145,7 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
       </div>
       {previewUrl && (
         <div className="mt-4">
-          <img src={previewUrl} alt="Preview" className="max-w-full h-auto max-h-48 object-contain" />
+          <Image src={previewUrl} alt="Preview" className="max-w-full h-auto max-h-48 object-contain" />
         </div>
       )}
       <div className="flex justify-between">

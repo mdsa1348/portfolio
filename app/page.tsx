@@ -41,7 +41,7 @@ export default function Home() {
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-4" />
               <div className="space-y-4 text-gray-400">
                 <p>
-                  I'm an aspiring Fullstack Software Engineer with expertise in building dynamic and user-friendly applications using technologies like React Native, Flutter, CodeIgniter, React, Express, MySQL, and Firebase. I have experience working on diverse projects, including video calling apps, AI-powered solutions, and dynamic dashboards.
+                  I&apos;m an aspiring Fullstack Software Engineer with expertise in building dynamic and user-friendly applications using technologies like React Native, Flutter, CodeIgniter, React, Express, MySQL, and Firebase. I have experience working on diverse projects, including video calling apps, AI-powered solutions, and dynamic dashboards.
                 </p>
                 <p>
                   My work focuses on creating innovative, scalable, and impactful solutions while delivering high-quality results. I enjoy collaborating with teams and exploring new technologies to stay ahead in the ever-evolving tech landscape.
@@ -50,7 +50,7 @@ export default function Home() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold mb-2">What I'm Doing</h2>
+              <h2 className="text-2xl font-bold mb-2">What I&apos;m Doing</h2>
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {services.map((service) => (

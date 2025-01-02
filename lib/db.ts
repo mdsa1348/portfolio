@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { RowDataPacket, ResultSetHeader, OkPacket } from 'mysql2';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 // Update interfaces to extend RowDataPacket
 export interface PortfolioItem extends RowDataPacket {

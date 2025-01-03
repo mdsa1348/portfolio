@@ -74,17 +74,18 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
         method,
         body: form,
       })
-
+      
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || `Failed to ${item ? 'update' : 'add'} portfolio item`)
       }
-
+      console.log('Frontend successfully connected to backend.');
       alert(`Portfolio item ${item ? 'updated' : 'added'} successfully!`)
       
       // Reload the page
       window.location.reload()
     } catch (error) {
+      console.error('Error:', error);
       alert('Error: ' + (error instanceof Error ? error.message : 'An unknown error occurred'))
     } finally {
       setIsLoading(false)

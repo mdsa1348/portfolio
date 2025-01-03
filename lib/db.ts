@@ -50,13 +50,16 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Helper function to ensure database connection
+// Helper function to fetch portfolio items from the database
 async function ensureConnection() {
   try {
-    await pool.query('SELECT 1');
+    // Execute the query to fetch portfolio items
+    const [rows] = await pool.query('SELECT * FROM portfolio_items ORDER BY created_at DESC');
+    return rows; // Return the fetched rows
   } catch (error) {
-    console.error('Error connecting to the database:', error);
-    throw new Error('Unable to connect to the database');
+    // Log the error and throw a new error
+    console.error('Error fetching portfolio items from the database:', error);
+    throw new Error('Unable to fetch portfolio items from the database');
   }
 }
 

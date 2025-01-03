@@ -1,3 +1,4 @@
+// "use client"
 import { Navigation } from '@/components/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { getPortfolioItems, PortfolioItem } from '@/lib/db'
@@ -13,9 +14,13 @@ export default async function Portfolio() {
   try {
     portfolioItems = await getPortfolioItems();
     isConnected = true;
+    console.log('Database:');
+
   } catch (e) {
     error = e instanceof Error ? e.message : 'An unknown error occurred';
     console.error('Database error:', error);
+    console.log('Database Error:');
+
   }
 
   return (

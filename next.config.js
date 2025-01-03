@@ -3,7 +3,8 @@ const nextConfig = {
     serverComponentsExternalPackages: ['sharp', 'nodemailer'],
   },
   images: {
-    domains: ['localhost'],
+    // domains: ['localhost'],
+    domains: ['https://portfolio-livid-nine-23.vercel.app/'],
   },
 }
 

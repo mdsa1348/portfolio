@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 export function ContactForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
-  const router = useRouter()
+  
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()

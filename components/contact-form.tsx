@@ -39,7 +39,7 @@ export function ContactForm() {
          // Reload the page
         window.location.reload()
       } else {
-        throw new Error(result.error || 'Failed to send message')
+        throw new Error(result.error || 'Failed to send message.')
       }
     } catch (error) {
       console.error('Error sending message:', error)

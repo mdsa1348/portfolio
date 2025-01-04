@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useRouter } from 'next/navigation'
 
 export function ContactForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -35,7 +34,7 @@ export function ContactForm() {
       const result = await response.json()
 
       if (response.ok) {
-        setMessage({ text: result.message || 'Your message has been sent successfully!', type: 'success' })
+        setMessage({ text: result.message || 'Your message has been sent successfully!!', type: 'success' })
          // Reload the page
         window.location.reload()
       } else {

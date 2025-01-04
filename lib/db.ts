@@ -262,13 +262,14 @@ export async function initializeTables(): Promise<void> {
   await createMessagesTable();
 }
 
-// Function to test the database connection
-export async function testDatabaseConnection(): Promise<void> {
+export async function testDatabaseConnection(): Promise<boolean> {
   try {
-    await ensureConnection();
-    console.log('Successfully connected to the database');
+    const connection = await pool.getConnection()
+    connection.release()
+    return true
   } catch (error) {
-    console.error('Failed to connect to the database:', error);
+    console.error('Failed to connect to the database:', error)
+    return false
   }
 }
 

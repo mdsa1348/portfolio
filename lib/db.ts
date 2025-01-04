@@ -39,10 +39,10 @@ export interface Message extends RowDataPacket {
 
 // Create a connection pool
 const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: process.env.MYSQL_HOST || 'sql12.freesqldatabase.com',
+  user: process.env.MYSQL_USER || 'sql12755218',
+  password: process.env.MYSQL_PASSWORD || '5GWDNIcxn3',
+  database: process.env.MYSQL_DATABASE || 'sql12755218',
   connectTimeout: 30000,
   port: 3306,
   waitForConnections: true,

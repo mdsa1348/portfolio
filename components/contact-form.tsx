@@ -36,8 +36,8 @@ export function ContactForm() {
 
       if (response.ok) {
         setMessage({ text: result.message || 'Your message has been sent successfully!', type: 'success' })
-        event.currentTarget.reset()
-        router.refresh() // Refresh the page to update the messages list
+         // Reload the page
+        window.location.reload()
       } else {
         throw new Error(result.error || 'Failed to send message')
       }

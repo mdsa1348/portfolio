@@ -144,10 +144,17 @@ export function AddPortfolioItemForm({ item, onCancel }: AddPortfolioItemFormPro
         />
       </div>
       {previewUrl && (
-        <div className="mt-4">
-          <Image src={previewUrl} alt="Preview" className="max-w-full h-auto max-h-48 object-contain" />
-        </div>
-      )}
+  <div className="mt-4">
+    <Image
+      src={previewUrl}
+      alt="Preview"
+      width={300} // Replace with appropriate width
+      height={200} // Replace with appropriate height
+      className="max-w-full h-auto max-h-48 object-contain"
+    />
+  </div>
+)}
+
       <div className="flex justify-between">
         <Button type="submit" disabled={isLoading}>
           {isLoading ? 'Saving...' : (item ? 'Update Item' : 'Add Item')}

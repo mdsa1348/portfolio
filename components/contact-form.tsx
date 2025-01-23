@@ -40,14 +40,6 @@ export function ContactForm() {
       // Reload the page
       window.location.reload()
 
-
-      // if (response.ok) {
-      //   setMessage({ text: result.message || 'Your message has been sent successfully!!', type: 'success' })
-      //    // Reload the page
-      //   window.location.reload()
-      // } else {
-      //   throw new Error(result.error || 'Failed to send message.')
-      // }
     } catch (error) {
       console.error('Error sending message:', error)
       setMessage({ text: error instanceof Error ? error.message : 'Failed to send message. Please try again.', type: 'error' })

@@ -38,6 +38,20 @@ export interface Message extends RowDataPacket {
 }
 
 // Create a connection pool
+// const pool = mysql.createPool({
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'portfolio',
+//   connectTimeout: 30000,
+//   port: 3306,
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 0
+// });
+
+
+// Create a connection pool
 const pool = mysql.createPool({
   host: 'sql12.freesqldatabase.com',
   user: 'sql12755218',
@@ -66,13 +80,13 @@ async function ensureConnection() {
 // Function to get all portfolio items (projects and courses)
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
   // Log the connection details for debugging
-  console.log('Database connection details:');
-  console.log({
-    host: process.env.MYSQL_HOST ,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD ,
-    database: process.env.MYSQL_DATABASE
-  });
+  // console.log('Database connection details:');
+  // console.log({
+  //   host: process.env.MYSQL_HOST ,
+  //   user: process.env.MYSQL_USER,
+  //   password: process.env.MYSQL_PASSWORD ,
+  //   database: process.env.MYSQL_DATABASE
+  // });
   await ensureConnection();
   const [rows] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items ORDER BY created_at DESC');
   return rows;

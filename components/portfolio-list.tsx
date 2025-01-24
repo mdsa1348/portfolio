@@ -42,28 +42,28 @@ export function PortfolioList({ initialItems }: PortfolioListProps) {
         <Button
           onClick={() => setFilter("all")}
           variant={filter === "all" ? "default" : "outline"}
-          className="min-w-[100px]"
+          className="min-w-[100px] text-black"
         >
           All
         </Button>
         <Button
           onClick={() => setFilter("project")}
           variant={filter === "project" ? "default" : "outline"}
-          className="min-w-[100px]"
+          className="min-w-[100px] text-black"
         >
           Projects
         </Button>
         <Button
           onClick={() => setFilter("course")}
           variant={filter === "course" ? "default" : "outline"}
-          className="min-w-[100px]"
+          className="min-w-[100px] text-black"
         >
           Courses
         </Button>
         <Button
           onClick={() => setFilter("thesis")}
           variant={filter === "thesis" ? "default" : "outline"}
-          className="min-w-[100px]"
+          className="min-w-[100px] text-black"
         >
           Thesis
         </Button>

@@ -41,7 +41,7 @@ export default function Home() {
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-4" />
               <div className="space-y-4 text-gray-400">
                 <p>
-                  I'm Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media. I
+                  I&apos;m Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media. I
                   enjoy turning complex problems into simple, beautiful and intuitive designs.
                 </p>
                 <p>
@@ -54,7 +54,7 @@ export default function Home() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold mb-2">What I'm Doing</h2>
+              <h2 className="text-2xl font-bold mb-2">What I&apos;m Doing</h2>
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {services.map((service) => (

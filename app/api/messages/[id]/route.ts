@@ -5,7 +5,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   try {
     await initializeDatabase()
     const id = params.id
-    const deleted = await deleteMessage(id)
+    await deleteMessage(id)
 
     // if (!deleted) {
     //   return NextResponse.json({ error: "Message not found" }, { status: 404 })
@@ -13,7 +13,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
     return NextResponse.json({ message: "Message deleted successfully" }, { status: 200 })
   } catch (error) {
-    // console.error("Error in DELETE /api/messages/[id]:", error)
+    console.error("Error in DELETE :", error)
     return NextResponse.json({ error: "Error deleting message" }, { status: 500 })
   }
 }

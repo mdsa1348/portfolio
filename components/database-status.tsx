@@ -19,6 +19,7 @@ export function DatabaseStatus() {
       }
       setMessage(data.message)
     } catch (error) {
+      console.error("Error in DELETE :", error)
       setStatus('disconnected')
       setMessage('An error occurred while checking the database connection')
     }

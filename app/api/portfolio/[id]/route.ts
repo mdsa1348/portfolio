@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { updatePortfolioItem, deletePortfolioItem, initializeDatabase } from "@/lib/db"
-import { writeFile, unlink, mkdir } from "fs/promises"
+import { writeFile, mkdir } from "fs/promises"
 import { join } from "path"
 import { nanoid } from "nanoid"
 

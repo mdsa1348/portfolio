@@ -39,7 +39,7 @@ export function AddBlogPostForm({ post, onCancel }: AddBlogPostFormProps) {
     setIsLoading(true)
 
     try {
-      const url = post ? `/api/blog/${post.id}` : '/api/blog'
+      const url = post ? `/api/blog/${post._id}` : '/api/blog'
       const method = post ? 'PUT' : 'POST'
 
       const response = await fetch(url, {
@@ -57,6 +57,10 @@ export function AddBlogPostForm({ post, onCancel }: AddBlogPostFormProps) {
 
       alert(`Blog post ${post ? 'updated' : 'added'} successfully!`)
       
+      // Refresh the page to update the blog posts list
+      window.location.reload()
+
+      
       if (post && onCancel) {
         onCancel()
       } else {
@@ -64,8 +68,7 @@ export function AddBlogPostForm({ post, onCancel }: AddBlogPostFormProps) {
         setFormData({ title: '', excerpt: '', content: '' })
       }
 
-      // Refresh the page to update the blog posts list
-      window.location.reload()
+      
     } catch (error) {
       alert('Error: ' + (error instanceof Error ? error.message : 'An unknown error occurred'))
     } finally {
@@ -110,7 +113,7 @@ export function AddBlogPostForm({ post, onCancel }: AddBlogPostFormProps) {
           {isLoading ? 'Saving...' : (post ? 'Update Post' : 'Add Post')}
         </Button>
         {post && onCancel && (
-          <Button className=" text-black" type="button" onClick={onCancel} variant="outline" >
+          <Button type="button" onClick={onCancel} variant="outline">
             Cancel
           </Button>
         )}

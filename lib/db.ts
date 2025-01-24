@@ -1,303 +1,280 @@
-import mysql from 'mysql2/promise';
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { MongoClient, type Db, ObjectId, type WithId, type Document } from "mongodb"
 
-// Update interfaces to extend RowDataPacket
-export interface PortfolioItem extends RowDataPacket {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-  type: 'project' | 'course' | 'thesis';
-  created_at: Date;
+let cachedClient: MongoClient | null = null
+let cachedDb: Db | null = null
+
+export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb }
+  }
+
+  const uri = process.env.MONGODB_URI
+  if (!uri) {
+    throw new Error("Please define the MONGODB_URI environment variable")
+  }
+
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(process.env.MONGODB_DB)
+
+  cachedClient = client
+  cachedDb = db
+
+  return { client, db }
 }
 
-export interface ResumeItem extends RowDataPacket {
-  id: number;
-  type: 'experience' | 'education';
-  title: string;
-  description: string;
-  date: string;
-  created_at: Date;
+export interface PortfolioItem {
+  _id: string
+  title: string
+  description: string
+  image: string
+  category: string
+  type: "project" | "course" | "thesis"
+  created_at: Date
 }
 
-export interface BlogPost extends RowDataPacket {
-  id: number;
-  title: string;
-  excerpt: string;
-  content: string;
-  created_at: Date;
+export interface ResumeItem {
+  _id: string
+  type: "experience" | "education"
+  title: string
+  description: string
+  date: string
+  created_at: Date
 }
 
-export interface Message extends RowDataPacket {
-  id: number;
-  name: string;
-  email: string;
-  message: string;
-  created_at: Date;
+export interface BlogPost {
+  _id: string
+  title: string
+  excerpt: string
+  content: string
+  created_at: Date
 }
 
-// Create a connection pool
-// const pool = mysql.createPool({
-//   host: 'localhost',
-//   user: 'root',
-//   password: '',
-//   database: 'portfolio',
-//   connectTimeout: 30000,
-//   port: 3306,
-//   waitForConnections: true,
-//   connectionLimit: 10,
-//   queueLimit: 0
-// });
+export interface Message {
+  _id: string
+  name: string
+  email: string
+  message: string
+  created_at: Date
+}
 
+export async function getPortfolioItems(): Promise<PortfolioItem[]> {
+  const { db } = await connectToDatabase()
+  const items = await db.collection("portfolio_items").find().sort({ created_at: -1 }).toArray()
+  return items.map((item: WithId<Document>) => ({
+    _id: item._id.toString(),
+    title: item.title as string,
+    description: item.description as string,
+    image: item.image as string,
+    category: item.category as string,
+    type: item.type as "project" | "course" | "thesis",
+    created_at: item.created_at as Date,
+  }))
+}
 
-// Create a connection pool
-const pool = mysql.createPool({
-  host: 'sql12.freesqldatabase.com',
-  user: 'sql12755218',
-  password: '5GWDNIcxn3',
-  database: 'sql12755218',
-  connectTimeout: 30000,
-  port: 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-// Helper function to fetch portfolio items from the database
-async function ensureConnection() {
-  try {
-    // Execute the query to fetch portfolio items
-    const [rows] = await pool.query('SELECT * FROM portfolio_items ORDER BY created_at DESC');
-    return rows; // Return the fetched rows
-  } catch (error) {
-    // Log the error and throw a new error
-    console.error('Error fetching portfolio items from the database:', error);
-    throw new Error('Unable to fetch portfolio items from the database');
+export async function addPortfolioItem(item: Omit<PortfolioItem, "_id" | "created_at">): Promise<PortfolioItem> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("portfolio_items").insertOne({
+    ...item,
+    created_at: new Date(),
+  })
+  return {
+    _id: result.insertedId.toString(),
+    ...item,
+    created_at: new Date(),
   }
 }
 
-// Function to get all portfolio items (projects and courses)
-export async function getPortfolioItems(): Promise<PortfolioItem[]> {
-  // Log the connection details for debugging
-  // console.log('Database connection details:');
-  // console.log({
-  //   host: process.env.MYSQL_HOST ,
-  //   user: process.env.MYSQL_USER,
-  //   password: process.env.MYSQL_PASSWORD ,
-  //   database: process.env.MYSQL_DATABASE
-  // });
-  await ensureConnection();
-  const [rows] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items ORDER BY created_at DESC');
-  return rows;
+export async function updatePortfolioItem(
+  id: string,
+  item: Partial<Omit<PortfolioItem, "_id" | "created_at">>,
+): Promise<PortfolioItem | null> {
+  const { db } = await connectToDatabase()
+try{
+  const result = await db
+    .collection("portfolio_items")
+    .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: item }, { returnDocument: "after" })
+  if (result && result.value) {
+    return {
+      _id: result.value._id.toString(),
+      title: result.value.title,
+      description: result.value.description,
+      image: result.value.image,
+      category: result.value.category,
+      type: result.value.type,
+      created_at: result.value.created_at,
+    }
+  }
+  return null
+
+} catch (error) {
+  console.error("Error updating portfolio item:", error);
+  throw new Error("Failed to update portfolio item");
 }
 
-// Function to get all resume items
+}
+
+export async function deletePortfolioItem(id: string): Promise<boolean> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("portfolio_items").deleteOne({ _id: new ObjectId(id) })
+  return result.deletedCount === 1
+}
+
 export async function getResumeItems(): Promise<ResumeItem[]> {
-  await ensureConnection();
-  const [rows] = await pool.query<ResumeItem[]>('SELECT * FROM resume_items ORDER BY date DESC');
-  return rows;
+  const { db } = await connectToDatabase()
+  const items = await db.collection("resume_items").find().sort({ date: -1 }).toArray()
+  return items.map((item: WithId<Document>) => ({
+    _id: item._id.toString(),
+    type: item.type as "experience" | "education",
+    title: item.title as string,
+    description: item.description as string,
+    date: item.date as string,
+    created_at: item.created_at as Date,
+  }))
 }
 
-// Function to get all blog posts
+export async function addResumeItem(item: Omit<ResumeItem, "_id" | "created_at">): Promise<ResumeItem> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("resume_items").insertOne({
+    ...item,
+    created_at: new Date(),
+  })
+  return {
+    _id: result.insertedId.toString(),
+    ...item,
+    created_at: new Date(),
+  }
+}
+
+export async function updateResumeItem(
+  id: string,
+  item: Partial<Omit<ResumeItem, "_id" | "created_at">>,
+): Promise<ResumeItem | null> {
+  const { db } = await connectToDatabase()
+  const result = await db
+    .collection("resume_items")
+    .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: item }, { returnDocument: "after" })
+  if (result && result.value) {
+    return {
+      _id: result.value._id.toString(),
+      type: result.value.type,
+      title: result.value.title,
+      description: result.value.description,
+      date: result.value.date,
+      created_at: result.value.created_at,
+    }
+  }
+  return null
+}
+
+export async function deleteResumeItem(id: string): Promise<boolean> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("resume_items").deleteOne({ _id: new ObjectId(id) })
+  return result.deletedCount === 1
+}
+
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  await ensureConnection();
-  const [rows] = await pool.query<BlogPost[]>('SELECT * FROM blog_posts ORDER BY created_at DESC');
-  return rows;
+  const { db } = await connectToDatabase()
+  const posts = await db.collection("blog_posts").find().sort({ created_at: -1 }).toArray()
+  return posts.map((post: WithId<Document>) => ({
+    _id: post._id.toString(),
+    title: post.title as string,
+    excerpt: post.excerpt as string,
+    content: post.content as string,
+    created_at: post.created_at as Date,
+  }))
 }
 
-// Function to add a new portfolio item (project or course)
-export async function addPortfolioItem(title: string, description: string, category: string, image: string, type: 'project' | 'course'): Promise<PortfolioItem> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>(
-    'INSERT INTO portfolio_items (title, description, category, image, type) VALUES (?, ?, ?, ?, ?)',
-    [title, description, category, image, type]
-  );
-  const [newItem] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items WHERE id = ?', [result.insertId]);
-  return newItem[0];
+export async function addBlogPost(post: Omit<BlogPost, "_id" | "created_at">): Promise<BlogPost> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("blog_posts").insertOne({
+    ...post,
+    created_at: new Date(),
+  })
+  return {
+    _id: result.insertedId.toString(),
+    ...post,
+    created_at: new Date(),
+  }
 }
 
-// Function to update an existing portfolio item
-export async function updatePortfolioItem(id: number, title: string, description: string, category: string, image: string, type: 'project' | 'course'): Promise<PortfolioItem | null> {
-  await ensureConnection();
-  await pool.query<ResultSetHeader>(
-    'UPDATE portfolio_items SET title = ?, description = ?, category = ?, image = ?, type = ? WHERE id = ?',
-    [title, description, category, image, type, id]
-  );
-  const [updatedItem] = await pool.query<PortfolioItem[]>('SELECT * FROM portfolio_items WHERE id = ?', [id]);
-  return updatedItem[0] || null;
+export async function updateBlogPost(
+  id: string,
+  post: Partial<Omit<BlogPost, "_id" | "created_at">>,
+): Promise<BlogPost | null> {
+  const { db } = await connectToDatabase()
+  const result = await db
+    .collection("blog_posts")
+    .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: post }, { returnDocument: "after" })
+  if (result && result.value) {
+    return {
+      _id: result.value._id.toString(),
+      title: result.value.title,
+      excerpt: result.value.excerpt,
+      content: result.value.content,
+      created_at: result.value.created_at,
+    }
+  }
+  return null
 }
 
-// Function to delete a portfolio item
-export async function deletePortfolioItem(id: number): Promise<boolean> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>('DELETE FROM portfolio_items WHERE id = ?', [id]);
-  return result.affectedRows > 0;
-}
-
-// Function to add a new resume item
-export async function addResumeItem(type: 'experience' | 'education', title: string, description: string, date: string): Promise<ResumeItem> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>(
-    'INSERT INTO resume_items (type, title, description, date) VALUES (?, ?, ?, ?)',
-    [type, title, description, date]
-  );
-  const [newItem] = await pool.query<ResumeItem[]>('SELECT * FROM resume_items WHERE id = ?', [result.insertId]);
-  return newItem[0];
-}
-
-// Function to update an existing resume item
-export async function updateResumeItem(id: number, type: 'experience' | 'education', title: string, description: string, date: string): Promise<ResumeItem | null> {
-  await ensureConnection();
-  await pool.query<ResultSetHeader>(
-    'UPDATE resume_items SET type = ?, title = ?, description = ?, date = ? WHERE id = ?',
-    [type, title, description, date, id]
-  );
-  const [updatedItem] = await pool.query<ResumeItem[]>('SELECT * FROM resume_items WHERE id = ?', [id]);
-  return updatedItem[0] || null;
-}
-
-// Function to delete a resume item
-export async function deleteResumeItem(id: number): Promise<boolean> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>('DELETE FROM resume_items WHERE id = ?', [id]);
-  return result.affectedRows > 0;
-}
-
-// Function to add a new blog post
-export async function addBlogPost(title: string, excerpt: string, content: string): Promise<BlogPost> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>(
-    'INSERT INTO blog_posts (title, excerpt, content) VALUES (?, ?, ?)',
-    [title, excerpt, content]
-  );
-  const [newPost] = await pool.query<BlogPost[]>('SELECT * FROM blog_posts WHERE id = ?', [result.insertId]);
-  return newPost[0];
-}
-
-// Function to update an existing blog post
-export async function updateBlogPost(id: number, title: string, excerpt: string, content: string): Promise<BlogPost | null> {
-  await ensureConnection();
-  await pool.query<ResultSetHeader>(
-    'UPDATE blog_posts SET title = ?, excerpt = ?, content = ? WHERE id = ?',
-    [title, excerpt, content, id]
-  );
-  const [updatedPost] = await pool.query<BlogPost[]>('SELECT * FROM blog_posts WHERE id = ?', [id]);
-  return updatedPost[0] || null;
-}
-
-// Function to delete a blog post
-export async function deleteBlogPost(id: number): Promise<boolean> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>('DELETE FROM blog_posts WHERE id = ?', [id]);
-  return result.affectedRows > 0;
-}
-
-// Function to create the portfolio table if it doesn't exist
-export async function createPortfolioTable(): Promise<void> {
-  await ensureConnection();
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS portfolio_items (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      description TEXT NOT NULL,
-      category VARCHAR(100) NOT NULL,
-      image VARCHAR(255) NOT NULL,
-      type ENUM('project', 'course', 'thesis') NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-  
-  // Add or modify the type column if it doesn't exist
-  await pool.query(`
-    ALTER TABLE portfolio_items
-    MODIFY COLUMN type ENUM('project', 'course', 'thesis') NOT NULL DEFAULT 'project'
-  `);
-}
-
-// Function to create the resume table if it doesn't exist
-export async function createResumeTable(): Promise<void> {
-  await ensureConnection();
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS resume_items (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      type ENUM('experience', 'education') NOT NULL,
-      title VARCHAR(255) NOT NULL,
-      description TEXT NOT NULL,
-      date VARCHAR(100) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-}
-
-// Function to create the blog table if it doesn't exist
-export async function createBlogTable(): Promise<void> {
-  await ensureConnection();
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS blog_posts (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      excerpt TEXT NOT NULL,
-      content TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-}
-
-// Function to add a new message
-export async function addMessage(name: string, email: string, message: string): Promise<Message> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>(
-    'INSERT INTO messages (name, email, message) VALUES (?, ?, ?)',
-    [name, email, message]
-  );
-  const [newMessage] = await pool.query<Message[]>('SELECT * FROM messages WHERE id = ?', [result.insertId]);
-  return newMessage[0];
+export async function deleteBlogPost(id: string): Promise<boolean> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("blog_posts").deleteOne({ _id: new ObjectId(id) })
+  return result.deletedCount === 1
 }
 
 export async function getMessages(): Promise<Message[]> {
-  await ensureConnection();
-  await createMessagesTable(); // Ensure the table exists
-  const [rows] = await pool.query<Message[]>('SELECT * FROM messages ORDER BY created_at DESC');
-  return rows;
+  const { db } = await connectToDatabase()
+  const messages = await db.collection("messages").find().sort({ created_at: -1 }).toArray()
+  return messages.map((message: WithId<Document>) => ({
+    _id: message._id.toString(),
+    name: message.name as string,
+    email: message.email as string,
+    message: message.message as string,
+    created_at: message.created_at as Date,
+  }))
 }
 
-// Function to create the messages table if it doesn't exist
-export async function createMessagesTable(): Promise<void> {
-  await ensureConnection();
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS messages (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL,
-      message TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+export async function addMessage(message: Omit<Message, "_id" | "created_at">): Promise<Message> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("messages").insertOne({
+    ...message,
+    created_at: new Date(),
+  })
+  return {
+    _id: result.insertedId.toString(),
+    ...message,
+    created_at: new Date(),
+  }
 }
 
-// Initialize all tables
-export async function initializeTables(): Promise<void> {
-  await createPortfolioTable();
-  await createResumeTable();
-  await createBlogTable();
-  await createMessagesTable();
+export async function deleteMessage(id: string): Promise<boolean> {
+  const { db } = await connectToDatabase()
+  const result = await db.collection("messages").deleteOne({ _id: new ObjectId(id) })
+  return result.deletedCount === 1
 }
 
 export async function testDatabaseConnection(): Promise<boolean> {
   try {
-    const connection = await pool.getConnection()
-    connection.release()
+    const { client } = await connectToDatabase()
+    await client.db().command({ ping: 1 })
     return true
   } catch (error) {
-    console.error('Failed to connect to the database:', error)
+    console.error("Failed to connect to the database:", error)
     return false
   }
 }
 
-export async function deleteMessage(id: number): Promise<boolean> {
-  await ensureConnection();
-  const [result] = await pool.query<ResultSetHeader>('DELETE FROM messages WHERE id = ?', [id]);
-  return result.affectedRows > 0;
+export async function initializeDatabase(): Promise<void> {
+  const { db } = await connectToDatabase()
+  const collections = ["portfolio_items", "resume_items", "blog_posts", "messages"]
+
+  for (const collection of collections) {
+    if (!(await db.listCollections({ name: collection }).hasNext())) {
+      await db.createCollection(collection)
+      console.log(`Created collection: ${collection}`)
+    }
+  }
 }
 

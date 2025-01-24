@@ -46,7 +46,7 @@ export function AddResumeItemForm({ item, onCancel }: AddResumeItemFormProps) {
     setIsLoading(true)
 
     try {
-      const url = item ? `/api/resume/${item.id}` : '/api/resume'
+      const url = item ? `/api/resume/${item._id}` : '/api/resume'
       const method = item ? 'PUT' : 'POST'
 
       const response = await fetch(url, {
@@ -128,7 +128,7 @@ export function AddResumeItemForm({ item, onCancel }: AddResumeItemFormProps) {
           {isLoading ? 'Saving...' : (item ? 'Update Item' : 'Add Item')}
         </Button>
         {item && onCancel && (
-          <Button className="text-black" type="button" onClick={onCancel} variant="outline">
+          <Button type="button" onClick={onCancel} variant="outline">
             Cancel
           </Button>
         )}

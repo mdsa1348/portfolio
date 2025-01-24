@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useRouter } from 'next/navigation'
 
 export function ContactForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
-  
+  const router = useRouter()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -31,15 +32,15 @@ export function ContactForm() {
         },
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || `Failed to send message`)
-      }
-      alert(`Your message has been sent successfully!!`)
-      
-      // Reload the page
-      window.location.reload()
+      const result = await response.json()
 
+      if (response.ok) {
+        setMessage({ text: result.message || 'Your message has been sent successfully!', type: 'success' })
+        event.currentTarget.reset()
+        router.refresh() // Refresh the page to update the messages list
+      } else {
+        throw new Error(result.error || 'Failed to send message')
+      }
     } catch (error) {
       console.error('Error sending message:', error)
       setMessage({ text: error instanceof Error ? error.message : 'Failed to send message. Please try again.', type: 'error' })

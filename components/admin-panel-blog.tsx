@@ -40,11 +40,11 @@ export function AdminPanel({ blogPosts }: { blogPosts: BlogPost[] }) {
       <div className="space-y-4">
         <h4 className="text-lg font-semibold">Manage Blog Posts</h4>
         {blogPosts.map((post) => (
-          <div key={post.id} className="flex justify-between items-center bg-[#222222] p-4 rounded-md">
+          <div key={post._id} className="flex justify-between items-center bg-[#222222] p-4 rounded-md">
             <span>{post.title}</span>
             <div>
               <Button onClick={() => handleEdit(post)} className="mr-2">Edit</Button>
-              <Button onClick={() => handleDelete(post.id)} variant="destructive">Delete</Button>
+              <Button onClick={() => handleDelete(Number(post._id))} variant="destructive">Delete</Button>
             </div>
           </div>
         ))}

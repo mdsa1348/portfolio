@@ -1,8 +1,13 @@
 import { Navigation } from '@/components/navigation'
 import { Sidebar } from '@/components/sidebar'
-import { Code, Smartphone, Brain, Book } from 'lucide-react'
+import { Code, Smartphone, Camera, Palette } from 'lucide-react'
 
 const services = [
+  {
+    icon: Palette,
+    title: 'Web Design',
+    description: 'The most modern and high-quality design made at a professional level.',
+  },
   {
     icon: Code,
     title: 'Web Development',
@@ -14,14 +19,9 @@ const services = [
     description: 'Professional development of applications for iOS and Android.',
   },
   {
-    icon: Brain,
-    title: 'AI & ML',
-    description: 'Developing intelligent solutions using Artificial Intelligence and Machine Learning.',
-  },
-  {
-    icon: Book,
-    title: 'Online Courses',
-    description: 'Providing comprehensive online courses on various tech topics.',
+    icon: Camera,
+    title: 'Photography',
+    description: 'I make high-quality photos of any category at a professional level.',
   },
 ]
 
@@ -41,16 +41,20 @@ export default function Home() {
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-4" />
               <div className="space-y-4 text-gray-400">
                 <p>
-                  I&apos;m an aspiring Fullstack Software Engineer with expertise in building dynamic and user-friendly applications using technologies like React Native, Flutter, CodeIgniter, React, Express, MySQL, and Firebase. I have experience working on diverse projects, including video calling apps, AI-powered solutions, and dynamic dashboards.
+                  I'm Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media. I
+                  enjoy turning complex problems into simple, beautiful and intuitive designs.
                 </p>
                 <p>
-                  My work focuses on creating innovative, scalable, and impactful solutions while delivering high-quality results. I enjoy collaborating with teams and exploring new technologies to stay ahead in the ever-evolving tech landscape.
+                  My job is to build your website so that it is functional and user-friendly but at the same time attractive.
+                  Moreover, I add personal touch to your product and make sure that is eye-catching and easy to use. My aim is to
+                  bring across your message and identity in the most creative way. I created web design for many famous brand
+                  companies.
                 </p>
               </div>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold mb-2">What I&apos;m Doing</h2>
+              <h2 className="text-2xl font-bold mb-2">What I'm Doing</h2>
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {services.map((service) => (

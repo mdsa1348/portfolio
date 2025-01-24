@@ -1,19 +1,23 @@
-import { Navigation } from '@/components/navigation'
-import { Sidebar } from '@/components/sidebar'
-import { ContactForm } from '@/components/contact-form'
-import { AdminCheck } from '@/components/admin-check'
-import { getMessages, Message } from '@/lib/db'
-import { MessageList } from '@/components/message-list'
+import { Navigation } from "@/components/navigation"
+import { Sidebar } from "@/components/sidebar"
+import { ContactForm } from "@/components/contact-form"
+import { AdminCheck } from "@/components/admin-check"
+import { getMessages, type Message, initializeDatabase } from "@/lib/db"
+import { MessageList } from "@/components/message-list"
+
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function Contact() {
-  let messages: Message[] = [];
-  let error: string | null = null;
+  let messages: Message[] = []
+  let error: string | null = null
 
   try {
-    messages = await getMessages();
+    await initializeDatabase()
+    messages = await getMessages()
   } catch (e) {
-    console.error('Error fetching messages:', e);
-    error = e instanceof Error ? e.message : 'An unknown error occurred';
+    console.error("Error fetching messages:", e)
+    error = e instanceof Error ? e.message : "An unknown error occurred"
   }
 
   return (
@@ -24,7 +28,7 @@ export default async function Contact() {
         </div>
         <main className="space-y-8 px-6 overflow-y-auto max-h-[calc(100vh-4rem)]">
           <Navigation />
-          
+
           <div className="space-y-8">
             <section>
               <h2 className="text-2xl font-bold mb-2">Contact</h2>

@@ -1,10 +1,9 @@
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['sharp', 'nodemailer'],
+    serverComponentsExternalPackages: ["mongodb"],
   },
   images: {
-    // domains: ['localhost'],
-    domains: ['https://portfolio-livid-nine-23.vercel.app/'],
+    domains: ["localhost", "your-production-domain.com"],
   },
 }
 

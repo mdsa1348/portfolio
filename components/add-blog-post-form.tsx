@@ -61,12 +61,12 @@ export function AddBlogPostForm({ post, onCancel }: AddBlogPostFormProps) {
       window.location.reload()
 
       
-      if (post && onCancel) {
-        onCancel()
-      } else {
-        event.currentTarget.reset()
-        setFormData({ title: '', excerpt: '', content: '' })
-      }
+      // if (post && onCancel) {
+      //   onCancel()
+      // } else {
+      //   event.currentTarget.reset()
+      //   setFormData({ title: '', excerpt: '', content: '' })
+      // }
 
       
     } catch (error) {

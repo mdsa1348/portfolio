@@ -88,18 +88,18 @@ export function AddPortfolioItemForm({ item, onCancel, onItemAdded }: AddPortfol
       }
       // Refresh the page to update the blog posts list
       window.location.reload()
-      if (item && onCancel) {
-        onCancel()
-      } else {
-        setFormData({
-          title: "",
-          description: "",
-          category: "",
-          type: "project",
-        })
-        setFile(null)
-        setPreviewUrl(null)
-      }
+      // if (item && onCancel) {
+      //   onCancel()
+      // } else {
+      //   setFormData({
+      //     title: "",
+      //     description: "",
+      //     category: "",
+      //     type: "project",
+      //   })
+      //   setFile(null)
+      //   setPreviewUrl(null)
+      // }
     } catch (error) {
       alert("Error: " + (error instanceof Error ? error.message : "An unknown error occurred"))
     } finally {

@@ -64,15 +64,7 @@ export function AddResumeItemForm({ item, onCancel }: AddResumeItemFormProps) {
 
       alert(`Resume item ${item ? 'updated' : 'added'} successfully!`)
       window.location.reload()
-      if (item && onCancel) {
-        onCancel()
-      } else {
-        event.currentTarget.reset()
-        // setFormData({ type: 'experience', title: '', description: '', date: '' })
-      }
-
-      // Refresh the page to update the resume items list
-      window.location.reload()
+      
     } catch (error) {
       alert('Error: ' + (error instanceof Error ? error.message : 'An unknown error occurred'))
     } finally {

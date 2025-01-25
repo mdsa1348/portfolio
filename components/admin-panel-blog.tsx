@@ -12,7 +12,7 @@ export function AdminPanel({ blogPosts }: { blogPosts: BlogPost[] }) {
     setEditingPost(post)
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
       try {
         const response = await fetch(`/api/blog/${id}`, { method: 'DELETE' })
@@ -44,7 +44,7 @@ export function AdminPanel({ blogPosts }: { blogPosts: BlogPost[] }) {
             <span>{post.title}</span>
             <div>
               <Button onClick={() => handleEdit(post)} className="mr-2">Edit</Button>
-              <Button onClick={() => handleDelete(Number(post._id))} variant="destructive">Delete</Button>
+              <Button onClick={() => handleDelete(post._id)} variant="destructive">Delete</Button>
             </div>
           </div>
         ))}

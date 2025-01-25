@@ -28,12 +28,12 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   try {
     await initializeDatabase()
     const id = params.id
+    console.log("id :", id)
+    await deleteBlogPost(id)
 
-    const deleted = await deleteBlogPost(id)
-
-    if (!deleted) {
-      return NextResponse.json({ error: "Failed to delete blog post" }, { status: 404 })
-    }
+    // if (!deleted) {
+    //   return NextResponse.json({ error: "Failed to delete blog post" }, { status: 404 })
+    // }
 
     return NextResponse.json({ message: "Blog post deleted successfully" }, { status: 200 })
   } catch (error) {

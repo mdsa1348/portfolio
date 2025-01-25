@@ -102,24 +102,22 @@ export function PortfolioList({ initialItems }: PortfolioListProps) {
       </div>
 
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent>
+        <DialogContent className="bg-black ">
           <DialogHeader>
-            <DialogTitle>{selectedItem?.title}</DialogTitle>
+            <DialogTitle className="text-yellow-500 text-xl">{selectedItem?.title}</DialogTitle>
           </DialogHeader>
-          <p className="text-gray-400">{selectedItem?.description}</p>
+          <p className="text-white">{selectedItem?.description}</p>
         </DialogContent>
       </Dialog>
 
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl bg-black ">
           <div className="relative aspect-video">
             {selectedImage && (
               <Image src={selectedImage || "/placeholder.svg"} alt="Full size image" fill className="object-contain" />
             )}
           </div>
-          <DialogClose className="absolute top-2 right-2">
-            <Button variant="ghost">Close</Button>
-          </DialogClose>
+            
         </DialogContent>
       </Dialog>
     </div>

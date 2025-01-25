@@ -53,11 +53,11 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     await initializeDatabase()
     const id = params.id
 
-    const deleted = await deletePortfolioItem(id)
+    await deletePortfolioItem(id)
 
-    if (!deleted) {
-      return NextResponse.json({ error: "Failed to delete portfolio item" }, { status: 404 })
-    }
+    // if (!deleted) {
+    //   return NextResponse.json({ error: "Failed to delete portfolio item" }, { status: 404 })
+    // }
 
     return NextResponse.json({ message: "Portfolio item deleted successfully" }, { status: 200 })
   } catch (error) {

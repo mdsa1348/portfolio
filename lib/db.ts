@@ -1,4 +1,6 @@
 import { MongoClient, type Db, ObjectId, type WithId, type Document } from "mongodb"
+import fs from "fs/promises"
+import path from "path"
 
 let cachedClient: MongoClient | null = null
 let cachedDb: Db | null = null
@@ -90,11 +92,20 @@ export async function updatePortfolioItem(
   item: Partial<Omit<PortfolioItem, "_id" | "created_at">>,
 ): Promise<PortfolioItem | null> {
   const { db } = await connectToDatabase()
-try{
+
+  // Fetch the current item to get the old image filename
+  const currentItem = await db.collection("portfolio_items").findOne({ _id: new ObjectId(id) })
+
   const result = await db
     .collection("portfolio_items")
     .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: item }, { returnDocument: "after" })
+
   if (result && result.value) {
+    // If there's a new image and it's different from the old one, delete the old image
+    if (item.image && currentItem && currentItem.image !== item.image) {
+      await deleteImage(currentItem.image)
+    }
+
     return {
       _id: result.value._id.toString(),
       title: result.value.title,
@@ -106,18 +117,25 @@ try{
     }
   }
   return null
-
-} catch (error) {
-  console.error("Error updating portfolio item:", error);
-  throw new Error("Failed to update portfolio item");
-}
-
 }
 
 export async function deletePortfolioItem(id: string): Promise<boolean> {
   const { db } = await connectToDatabase()
-  const result = await db.collection("portfolio_items").deleteOne({ _id: new ObjectId(id) })
-  return result.deletedCount === 1
+
+  // Fetch the item to get the image filename
+  const item = await db.collection("portfolio_items").findOne({ _id: new ObjectId(id) })
+
+  if (item) {
+    const result = await db.collection("portfolio_items").deleteOne({ _id: new ObjectId(id) })
+
+    if (result.deletedCount === 1) {
+      // Delete the associated image file
+      await deleteImage(item.image)
+      return true
+    }
+  }
+
+  return false
 }
 
 export async function getResumeItems(): Promise<ResumeItem[]> {
@@ -275,6 +293,18 @@ export async function initializeDatabase(): Promise<void> {
       await db.createCollection(collection)
       console.log(`Created collection: ${collection}`)
     }
+  }
+}
+
+async function deleteImage(filename: string): Promise<void> {
+  if (!filename) return
+
+  const imagePath = path.join(process.cwd(), "public", "portfolio-images", filename)
+  try {
+    await fs.unlink(imagePath)
+    console.log(`Deleted image: ${filename}`)
+  } catch (error) {
+    console.error(`Error deleting image ${filename}:`, error)
   }
 }
 

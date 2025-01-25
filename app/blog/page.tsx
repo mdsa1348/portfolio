@@ -48,10 +48,11 @@ export default async function Blog() {
                         <div className="text-yellow-500 text-sm mb-2">
                           {new Date(post.created_at).toLocaleDateString()}
                         </div>
-                        <CardTitle>{post.title}</CardTitle>
+                        <CardTitle className="text-white text-lg">{post.title}</CardTitle>
+                        <p className="text-yellow-500">{post.excerpt}</p>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-gray-400">{post.excerpt}</p>
+                        <p className="text-gray-400">{post.content}</p>
                       </CardContent>
                     </Card>
                   ))}

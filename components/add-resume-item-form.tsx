@@ -63,7 +63,7 @@ export function AddResumeItemForm({ item, onCancel }: AddResumeItemFormProps) {
       }
 
       alert(`Resume item ${item ? 'updated' : 'added'} successfully!`)
-      
+      window.location.reload()
       if (item && onCancel) {
         onCancel()
       } else {

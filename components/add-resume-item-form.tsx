@@ -68,7 +68,7 @@ export function AddResumeItemForm({ item, onCancel }: AddResumeItemFormProps) {
         onCancel()
       } else {
         event.currentTarget.reset()
-        setFormData({ type: 'experience', title: '', description: '', date: '' })
+        // setFormData({ type: 'experience', title: '', description: '', date: '' })
       }
 
       // Refresh the page to update the resume items list

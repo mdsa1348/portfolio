@@ -102,9 +102,10 @@ export function PortfolioList({ initialItems }: PortfolioListProps) {
       </div>
 
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="bg-black ">
+        <DialogContent className="bg-black sm:max-w-[900px]">
           <DialogHeader>
             <DialogTitle className="text-yellow-500 text-xl">{selectedItem?.title}</DialogTitle>
+            <DialogTitle className="text-sm text-gray-400 mt-1">{selectedItem?.category}</DialogTitle>
           </DialogHeader>
           <p className="text-white">{selectedItem?.description}</p>
         </DialogContent>

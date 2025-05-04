@@ -37,38 +37,38 @@ export function PortfolioList({ initialItems }: PortfolioListProps) {
   const filteredItems = items.filter((item) => filter === "all" || item.type === filter)
 
   return (
-    
-      <div className="space-y-6">
-  <div className="flex flex-wrap gap-4">
-    <Button
-      onClick={() => setFilter("all")}
-      variant={filter === "all" ? "default" : "outline"}
-      className={`min-w-[100px] ${filter === "all" ? "text-white" : "text-black"}`}
-    >
-      All
-    </Button>
-    <Button
-      onClick={() => setFilter("project")}
-      variant={filter === "project" ? "default" : "outline"}
-      className={`min-w-[100px] ${filter === "project" ? "text-white" : "text-black"}`}
-    >
-      Projects
-    </Button>
-    <Button
-      onClick={() => setFilter("course")}
-      variant={filter === "course" ? "default" : "outline"}
-      className={`min-w-[100px] ${filter === "course" ? "text-white" : "text-black"}`}
-    >
-      Courses
-    </Button>
-    <Button
-      onClick={() => setFilter("thesis")}
-      variant={filter === "thesis" ? "default" : "outline"}
-      className={`min-w-[100px] ${filter === "thesis" ? "text-white" : "text-black"}`}
-    >
-      Thesis
-    </Button>
-  </div>
+
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-4">
+        <Button
+          onClick={() => setFilter("all")}
+          variant={filter === "all" ? "default" : "outline"}
+          className={`min-w-[100px] ${filter === "all" ? "text-white" : "text-black"}`}
+        >
+          All
+        </Button>
+        <Button
+          onClick={() => setFilter("project")}
+          variant={filter === "project" ? "default" : "outline"}
+          className={`min-w-[100px] ${filter === "project" ? "text-white" : "text-black"}`}
+        >
+          Projects
+        </Button>
+        <Button
+          onClick={() => setFilter("course")}
+          variant={filter === "course" ? "default" : "outline"}
+          className={`min-w-[100px] ${filter === "course" ? "text-white" : "text-black"}`}
+        >
+          Courses
+        </Button>
+        <Button
+          onClick={() => setFilter("thesis")}
+          variant={filter === "thesis" ? "default" : "outline"}
+          className={`min-w-[100px] ${filter === "thesis" ? "text-white" : "text-black"}`}
+        >
+          Thesis
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredItems.map((item) => (
@@ -118,7 +118,7 @@ export function PortfolioList({ initialItems }: PortfolioListProps) {
               <Image src={selectedImage || "/placeholder.svg"} alt="Full size image" fill className="object-contain" />
             )}
           </div>
-            
+
         </DialogContent>
       </Dialog>
     </div>

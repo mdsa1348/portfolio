@@ -4,7 +4,6 @@ import { getPortfolioItems, type PortfolioItem, initializeDatabase } from "@/lib
 import { AdminPanel } from "@/components/admin-panel"
 import { AdminCheck } from "@/components/admin-check"
 import { PortfolioList } from "@/components/portfolio-list"
-import { DatabaseStatus } from "@/components/database-status"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -35,7 +34,7 @@ export default async function Portfolio() {
               <h2 className="text-2xl font-bold mb-2">Portfolio</h2>
               <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
 
-              <DatabaseStatus />
+             
 
               <AdminCheck>
                 <AdminPanel portfolioItems={portfolioItems} />

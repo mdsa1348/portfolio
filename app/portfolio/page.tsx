@@ -27,26 +27,6 @@ export default async function Portfolio() {
         <AdminPanel portfolioItems={portfolioItems} />
       </AdminCheck>
 
-<<<<<<< HEAD
-             
-
-              <AdminCheck>
-                <AdminPanel portfolioItems={portfolioItems} />
-              </AdminCheck>
-
-              {error ? (
-                <p className="text-red-500">{error}</p>
-              ) : portfolioItems.length > 0 ? (
-                <PortfolioList initialItems={portfolioItems} />
-              ) : (
-                <p className="text-gray-400">No portfolio items found. Add some projects or courses to get started!</p>
-              )}
-            </section>
-          </div>
-        </main>
-      </div>
-    </div>
-=======
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : portfolioItems.length > 0 ? (
@@ -57,7 +37,6 @@ export default async function Portfolio() {
         </p>
       )}
     </section>
->>>>>>> 682a05d (feat: Initialize Next.js portfolio application with core pages, layout, navigation, and content display components.)
   )
 }
 

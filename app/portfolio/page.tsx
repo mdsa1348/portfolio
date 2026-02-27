@@ -1,5 +1,3 @@
-import { Navigation } from "@/components/navigation"
-import { Sidebar } from "@/components/sidebar"
 import { getPortfolioItems, type PortfolioItem, initializeDatabase } from "@/lib/db"
 import { AdminPanel } from "@/components/admin-panel"
 import { AdminCheck } from "@/components/admin-check"
@@ -21,19 +19,15 @@ export default async function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-[5px]">
-        <div className="md:sticky md:top-8 md:self-start">
-          <Sidebar />
-        </div>
-        <main className="space-y-8 px-6 overflow-y-auto max-h-[calc(100vh-4rem)]">
-          <Navigation />
+    <section>
+      <h2 className="text-2xl font-bold mb-2">Portfolio</h2>
+      <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
 
-          <div className="space-y-8">
-            <section>
-              <h2 className="text-2xl font-bold mb-2">Portfolio</h2>
-              <span className="block h-1 w-10 bg-yellow-500 rounded-full mb-6" />
+      <AdminCheck>
+        <AdminPanel portfolioItems={portfolioItems} />
+      </AdminCheck>
 
+<<<<<<< HEAD
              
 
               <AdminCheck>
@@ -52,6 +46,18 @@ export default async function Portfolio() {
         </main>
       </div>
     </div>
+=======
+      {error ? (
+        <p className="text-red-500">{error}</p>
+      ) : portfolioItems.length > 0 ? (
+        <PortfolioList initialItems={portfolioItems} />
+      ) : (
+        <p className="text-gray-400">
+          No portfolio items found. Add some projects or courses to get started!
+        </p>
+      )}
+    </section>
+>>>>>>> 682a05d (feat: Initialize Next.js portfolio application with core pages, layout, navigation, and content display components.)
   )
 }
 

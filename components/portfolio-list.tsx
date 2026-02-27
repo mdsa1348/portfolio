@@ -16,24 +16,6 @@ export function PortfolioList({ initialItems }: PortfolioListProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null)
 
-  const fetchItems = async () => {
-    try {
-      const response = await fetch("/api/portfolio")
-      if (response.ok) {
-        const data = await response.json()
-        setItems(data)
-      } else {
-        console.error("Failed to fetch portfolio items")
-      }
-    } catch (error) {
-      console.error("Error fetching portfolio items:", error)
-    }
-  }
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
   const filteredItems = items.filter((item) => filter === "all" || item.type === filter)
 
   return (

@@ -284,7 +284,11 @@ export async function testDatabaseConnection(): Promise<boolean> {
   }
 }
 
+let isInitialized = false
+
 export async function initializeDatabase(): Promise<void> {
+  if (isInitialized) return
+
   const { db } = await connectToDatabase()
   const collections = ["portfolio_items", "resume_items", "blog_posts", "messages"]
 
@@ -294,6 +298,8 @@ export async function initializeDatabase(): Promise<void> {
       console.log(`Created collection: ${collection}`)
     }
   }
+
+  isInitialized = true
 }
 
 async function deleteImage(filename: string): Promise<void> {

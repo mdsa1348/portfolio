@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -155,11 +156,12 @@ export function AddPortfolioItemForm({ item, onCancel, onItemAdded }: AddPortfol
         <Input type="file" accept="image/*" onChange={handleFileChange} className="bg-[#222222] border-gray-700" />
       </div>
       {previewUrl && (
-        <div className="mt-4">
-          <img
+        <div className="mt-4 relative h-48 w-full">
+          <Image
             src={previewUrl || "/placeholder.svg"}
             alt="Preview"
-            className="max-w-full h-auto max-h-48 object-contain"
+            fill
+            className="object-contain"
           />
         </div>
       )}

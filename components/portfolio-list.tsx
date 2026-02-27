@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import type { PortfolioItem } from "@/lib/db"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -11,7 +11,7 @@ interface PortfolioListProps {
 }
 
 export function PortfolioList({ initialItems }: PortfolioListProps) {
-  const [items, setItems] = useState(initialItems)
+  const [items] = useState(initialItems)
   const [filter, setFilter] = useState<"all" | "project" | "course" | "thesis">("all")
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null)
